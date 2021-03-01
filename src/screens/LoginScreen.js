@@ -23,7 +23,6 @@ function LoginScreen(props) {
         }
         props.Disable(false);
     }, [])
-
     // const [login, setLogin] = useState(false)
     const [userEmail, setUserEmail] = useState('');
     const [userPass, setUserPass] = useState('');
@@ -48,19 +47,6 @@ function LoginScreen(props) {
         props.Disable(true);
         props.SigninUser({ login: true, email: userEmail, password: userPass });
         // setDisable(true)
-    };
-
-    // const signupwithEmail = () => {
-    //   // props.Login(true);
-    //   console.log("Signup Email")
-    // };
-    const signinwithgmail = () => {
-        // props.Login(true);
-        console.log('Gmail');
-    };
-    const signinwithfb = () => {
-        // props.Login(true);
-        console.log('facebook');
     };
 
     // const toggleSwitch = () =>{
@@ -136,13 +122,13 @@ function LoginScreen(props) {
                         block
                         disabled={props.disable ? true : false}>
                         {/* <Icon name='home' /> */}
-                        <Text style={{ color: 'white' }}>Signin with Email</Text>
+                        <Text style={{ color: 'white' }}>Signin</Text>
                     </Button>
                     {/* {error && (
-              <Alert severity="error" onClick={() => setError(null)}>
-                {error}
-                </Alert>
-              )} */}
+            <Alert severity="error" onClick={() => setError(null)}>
+              {error}
+              </Alert>
+            )} */}
 
                     {/* <Button style={{marginTop: 50}} onPress={() => props.Login(true)} title="Login" /> */}
                 </Form>
@@ -155,39 +141,30 @@ function LoginScreen(props) {
                         fontSize: 20,
                     }}>
                     - OR -
-          </Text>
+        </Text>
                 <View style={{ paddingBottom: 50 }}>
                     <Button
                         style={{ marginEnd: 30, marginStart: 30 }}
-                        onPress={() => navigation.navigate('Signup')}
+                        onPress={() => navigation.navigate('Student')}
                         iconLeft
                         block
                         disabled={props.disable ? true : false}>
                         {/* <Icon name='home' /> */}
-                        <Text style={{ color: 'white' }}>Signup with Email</Text>
+                        <Text style={{ color: 'white' }}>Student Signup</Text>
                     </Button>
                     <Button
                         style={{
                             marginTop: 20,
                             marginEnd: 30,
                             marginStart: 30,
-                            // backgroundColor: 'red',
+                            backgroundColor: !props.disable ? "#8000ff" : 'grey',
                         }}
-                        onPress={signinwithgmail}
+                        onPress={() => navigation.navigate('Company')}
                         iconLeft
                         block
-                        disabled>
+                        disabled={props.disable ? true : false}>
                         {/* <Icon name='home' /> */}
-                        <Text style={{ color: 'white' }}>Signin with Gmail</Text>
-                    </Button>
-                    <Button
-                        style={{ marginTop: 20, marginEnd: 30, marginStart: 30 }}
-                        onPress={signinwithfb}
-                        iconLeft
-                        block
-                        disabled>
-                        {/* <Icon name='home' /> */}
-                        <Text style={{ color: 'white' }}>Signin with Facebook</Text>
+                        <Text style={{ color: 'white' }}>Company Signup</Text>
                     </Button>
                 </View>
             </View>
@@ -198,13 +175,17 @@ function LoginScreen(props) {
 const styles = StyleSheet.create({
     container: {
         width: WIDTH,
+        // height: HEIGHT - 310,
         // bottom: 50,
+        // flex: 1,
         // bottom: 0,
         // flex: 0.3,
         backgroundColor: 'white',
         // position: 'absolute',
         // zIndex: 2,
         // left: 0,
+        // flexDirection: 'column',
+        flexGrow: 1,
         paddingTop: 20,
         // borderWidth: 5,
         borderTopLeftRadius: 20,
@@ -217,15 +198,15 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 20,
     },
     image: {
-        // flex: 1,
+        flex: 1,
         resizeMode: 'cover',
         justifyContent: 'center',
     },
     text: {
         color: 'white',
         fontSize: 42,
-        paddingTop: 120,
-        paddingBottom: 120,
+        paddingTop: 152,
+        paddingBottom: 152,
         fontWeight: 'bold',
         textAlign: 'center',
         backgroundColor: '#000000a0',
@@ -233,7 +214,7 @@ const styles = StyleSheet.create({
     ImageBg: {
         flex: 1,
         // height: 50,
-        flexDirection: 'column',
+        // flexDirection: 'column',
     },
     contentContainer: {
         backgroundColor: '#f6f6f6',

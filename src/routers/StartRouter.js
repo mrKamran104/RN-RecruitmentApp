@@ -3,8 +3,9 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import SignupScreen from './../screens/SignupScreen';
 import LoginScreen from './../screens/LoginScreen';
+import Student from './../screens/StudentSignup';
+import Company from './../screens/CompanySignup';
 
 const Stack = createStackNavigator();
 
@@ -15,7 +16,8 @@ function StartRouter() {
         header: () => null,
       }}>
         <Stack.Screen name="Signin" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Student" component={Student} />
+        <Stack.Screen name="Company" component={Company} />
       </Stack.Navigator>
     </NavigationContainer>
   );

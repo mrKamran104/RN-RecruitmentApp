@@ -16,7 +16,7 @@ export default function AboutScreen(props) {
                 alignItems: 'center',
                 backgroundColor: 'white',
             }}>
-            <Text style={{ fontSize: 35, fontWeight: 'bold' }}>Blood Bank App</Text>
+            <Text style={{ fontSize: 35, fontWeight: 'bold' }}>Campus Recruitment App</Text>
             <Text style={{ color: 'gray' }}>Version 1.0</Text>
             <View style={{ marginTop: 30 }}>
                 <Image source={{ uri: ImageUri }}
@@ -29,7 +29,7 @@ export default function AboutScreen(props) {
                     }}
                 />
             </View>
-            <Text style={{ padding: 25 }}>{'\u00A9'} 2020-2021 Blood Bank Inc.</Text>
+            <Text style={{ padding: 25 }}>{'\u00A9'} 2020-2021 Recruitment App Inc.</Text>
             <TouchableOpacity
                 onPress={() => navigation.openDrawer()}
                 style={{ marginTop: 100, marginBottom: 10, backgroundColor: '#14151f', shadowColor: 'black', elevation: 20, width: 60, height: 60, borderRadius: 60 }}>

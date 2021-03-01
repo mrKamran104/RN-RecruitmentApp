@@ -13,65 +13,50 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { updateProfile } from '../store/actions';
-import { openCamera, openGallery } from './../utils/ImageSelection';
+import { openCamera, openGallery } from '../utils/ImageSelection';
 import Header from './../utils/Header';
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('window');
 
-var BUTTONS = [
-    { text: "Choose from Gallery", icon: "camera", iconColor: "#2c8ef4" },
-    { text: "Capture from Camera", icon: "camera", iconColor: "#f42ced" },
-    // { text: "Delete", icon: "trash", iconColor: "#fa213b" },
-    { text: "Cancel", icon: "close", iconColor: "#25de5b" }
-];
-// var DESTRUCTIVE_INDEX = 3;
-var CANCEL_INDEX = 2;
-
-function ProfileScreen(props) {
-    // const ImageUri = Image.resolveAssetSource(demo).uri;
-
-    // const [login, setLogin] = useState(false)
-    // const { navigation } = props;
-    const [userName, setUserName] = useState(props.user.name);
+function MyCV(props) {
+    const [userName, setUserName] = useState(props.user.name)
     const [genderRadio, setGenderRadio] = useState(props.user.gender);
     const [userAddress, setUserAddress] = useState(props.user.address);
-    const [userEmail, setUserEmail] = useState(props.user.email);
+    // const [userEmail, setUserEmail] = useState(props.user.email);
     const [resourcePath, setResourcePath] = useState(props.user.photo);
     const [edit, setEdit] = useState(false);
+    const [matricMarks, setMatricMarks] = useState(props.user.matricMarks)
+    const [intermediateMarks, setIntermediateMarks] = useState(props.user.intermediateMarks)
+    const [bachlerMarks, setBachlerMarks] = useState(props.user.bachlerMarks)
+    const [masterMarks, setMasterMarks] = useState(props.user.masterMarks)
+    const [descriptionMarks, setDescriptionMarks] = useState(props.user.descriptionMarks)
     const [phoneNo, setPhoneNo] = useState(props.user.phoneNo)
-    const [directorNames, setDirectorNames] = useState(props.user.directorNames)
-    const [hrName, setHrName] = useState(props.user.hrNames)
 
     console.log("Usrs: ", props.user)
-    const EditProfile = () => {
-        if (userName === '' || userAddress === '' || phoneNo === '') {
+    const EditJobProfile = () => {
+        if (edit && (phoneNo === '' || resourcePath === '' || userAddress === '' || userName === '' || intermediateMarks === '' || bachlerMarks === '' || descriptionMarks === '' || masterMarks === '')) {
             // setError('Fields are required');
             createTwoButtonAlert('Error!!!', 'All fields are required!!!', () => console.log('OK Pressed'));
             return;
         }
-        setEdit(true);
+        if (!edit) { return setEdit(true) };
+
         if (edit) {
             let Data = {
                 uid: props.user.uid,
+                matricMarks: matricMarks,
+                intermediateMarks: intermediateMarks,
+                bachlerMarks: bachlerMarks,
+                masterMarks: masterMarks,
+                descriptionMarks: descriptionMarks,
                 userName: userName,
+                gender: genderRadio,
                 address: userAddress,
-                email: userEmail,
+                email: props.user.email,
                 photo: resourcePath,
                 phoneNo: phoneNo,
-                role: props.user.role,
+                role: props.user.role
             };
-            if (props.user.role === 'student') {
-                Data['gender'] = genderRadio;
-                Data['matricMarks'] = props.user.matricMarks
-                Data['intermediateMarks'] = props.user.intermediateMarks
-                Data['bachlerMarks'] = props.user.bachlerMarks
-                Data['masterMarks'] = props.user.masterMarks
-                Data['descriptionMarks'] = props.user.descriptionMarks
-            }
-            else {
-                Data["directorNames"] = directorNames;
-                Data['hrName'] = hrName;
-            }
             props.updateProfile({
                 ...Data
             });
@@ -131,8 +116,6 @@ function ProfileScreen(props) {
         <ScrollView
             style={{
                 flex: 1,
-                // justifyContent: 'center',
-                // alignItems: 'center',
                 backgroundColor: 'white',
             }}>
             <Header Title="Home" Drawer={() => props.navigation.toggleDrawer()} />
@@ -175,87 +158,97 @@ function ProfileScreen(props) {
                 </TouchableOpacity>
             </View>
 
-            {/* <View> */}
             <View style={styles.container}>
                 <Form>
                     <Item floatingLabel>
-                        <Label>{props.user.role === 'student' ? "Student" : "Company Name"}</Label>
+                        <Label>Student Name</Label>
                         <Input
                             value={userName}
                             onChangeText={(val) => setUserName(val)}
                             disabled={!edit ? true : false}
                         />
                     </Item>
-                    {props.user.role === "company" &&
-                        <>
-                            <Item floatingLabel>
-                                <Label>Director Name</Label>
-                                <Input
-                                    value={directorNames}
-                                    onChangeText={(val) => setDirectorNames(val)}
-                                    disabled={!edit ? true : false}
-                                />
-                            </Item>
-                            <Item floatingLabel>
-                                <Label>HR Name</Label>
-                                <Input
-                                    value={hrName}
-                                    onChangeText={(val) => setHrName(val)}
-                                    disabled={!edit ? true : false}
-                                />
-                            </Item>
-                        </>}
-                    {props.user.role === "student" &&
-                        <>
-                            <Text style={{ marginStart: 20, fontSize: 16, marginTop: 10 }}>
-                                Gender
-            </Text>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    marginHorizontal: 80,
-                                    marginTop: 10,
-                                }}>
-                                <TouchableOpacity
-                                    style={{ flexDirection: 'row' }}
-                                    onPress={() => setGenderRadio(true)} disabled={!edit ? true : false}>
-                                    {RadioButton({
-                                        selected: genderRadio,
-                                        style: { borderColor: 'green' },
-                                        innerStyle: { backgroundColor: 'green' },
-                                    })}
-                                    <Text style={{ paddingLeft: 10, textAlignVertical: 'center' }}>
-                                        Male
-                </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={{ flexDirection: 'row' }}
-                                    onPress={() => setGenderRadio(false)} disabled={!edit ? true : false}>
-                                    {RadioButton({
-                                        selected: !genderRadio,
-                                        style: { borderColor: 'green' },
-                                        innerStyle: { backgroundColor: 'green' },
-                                    })}
-                                    <Text style={{ paddingLeft: 10, textAlignVertical: 'center' }}>
-                                        Female
-                </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </>}
-                    <View style={{
-                        marginStart: 15, marginTop: 15, flexDirection: 'row',
-                        justifyContent: 'space-between',
-                    }}>
+                    <Text style={{ marginStart: 20, fontSize: 16, marginTop: 10 }}>
+                        Gender
+          </Text>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            marginHorizontal: 80,
+                            marginTop: 10,
+                        }}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'row' }}
+                            onPress={() => setGenderRadio(true)} disabled={!edit ? true : false}>
+                            {RadioButton({
+                                selected: genderRadio,
+                                style: { borderColor: 'green' },
+                                innerStyle: { backgroundColor: 'green' },
+                            })}
+                            <Text style={{ paddingLeft: 10, textAlignVertical: 'center' }}>
+                                Male
+              </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'row' }}
+                            onPress={() => setGenderRadio(false)} disabled={!edit ? true : false}>
+                            {RadioButton({
+                                selected: !genderRadio,
+                                style: { borderColor: 'green' },
+                                innerStyle: { backgroundColor: 'green' },
+                            })}
+                            <Text style={{ paddingLeft: 10, textAlignVertical: 'center' }}>
+                                Female
+              </Text>
+                        </TouchableOpacity>
                     </View>
 
                     <Item floatingLabel>
                         <Label>Email</Label>
                         <Input
-                            value={userEmail}
-                            // autoCompleteType="email"
+                            value={props.user.email}
                             disabled={true}
-                            onChangeText={(val) => setUserEmail(val)}
+                        />
+                    </Item>
+                    <Item floatingLabel>
+                        <Label>Matric Mark's</Label>
+                        <Input
+                            value={matricMarks}
+                            disabled={!edit ? true : false}
+                            onChangeText={(val) => setMatricMarks(val)}
+                        />
+                    </Item>
+                    <Item floatingLabel>
+                        <Label>Intermediate Mark's</Label>
+                        <Input
+                            value={intermediateMarks}
+                            disabled={!edit ? true : false}
+                            onChangeText={(val) => setIntermediateMarks(val)}
+                        />
+                    </Item>
+                    <Item floatingLabel>
+                        <Label>Bachler CGPA</Label>
+                        <Input
+                            value={bachlerMarks}
+                            disabled={!edit ? true : false}
+                            onChangeText={(val) => setBachlerMarks(val)}
+                        />
+                    </Item>
+                    <Item floatingLabel>
+                        <Label>Master CGPA</Label>
+                        <Input
+                            value={masterMarks}
+                            disabled={!edit ? true : false}
+                            onChangeText={(val) => setMasterMarks(val)}
+                        />
+                    </Item>
+                    <Item floatingLabel>
+                        <Label>Decription</Label>
+                        <Input
+                            value={descriptionMarks}
+                            disabled={!edit ? true : false}
+                            onChangeText={(val) => setDescriptionMarks(val)}
                         />
                     </Item>
                     <Item floatingLabel>
@@ -278,7 +271,7 @@ function ProfileScreen(props) {
 
             </View>
             <View style={styles.container2}>
-                <Button style={styles.signup} onPress={EditProfile} iconLeft block>
+                <Button style={styles.signup} onPress={EditJobProfile} iconLeft block>
                     <Text style={{ color: 'white' }}>{!edit ? 'Edit' : 'Update'}</Text>
                 </Button>
             </View>
@@ -384,4 +377,4 @@ function mapDispatchToProp(dispatch) {
     };
 }
 
-export default connect(mapStateToProp, mapDispatchToProp)(ProfileScreen);
+export default connect(mapStateToProp, mapDispatchToProp)(MyCV);

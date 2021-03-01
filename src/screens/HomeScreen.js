@@ -1,9 +1,10 @@
 import {
     Card,
     CardItem,
-    Right
+    Right,
+    Icon, Fab
 } from 'native-base';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Dimensions,
     Image,
@@ -11,9 +12,8 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { GetDonor } from '../store/actions';
+import { GetPosts, GetAllPosts } from '../store/actions';
 import Header from './../utils/Header';
-import DetailsScreen from './DetailsScreen';
 
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('window');
 
@@ -21,6 +21,14 @@ function HomeScreen(props) {
 
     const { navigation } = props;
     const [searchVal, setSearchVal] = useState('');
+
+    useEffect(() => {
+        props.user.role === 'company' && props.GetPosts(props.user.uid)
+        props.user.role === 'student' && props.GetAllPosts()
+    }, [])
+
+    console.log("userrrrr", props.user)
+    console.log("posts", props.posts)
 
     return (
         <View
@@ -31,103 +39,69 @@ function HomeScreen(props) {
                 backgroundColor: '#c1cdd0',
             }}>
             <Header Title="Home" Drawer={() => props.navigation.toggleDrawer()} />
-            {/* <Text style={{ padding: 20 }}>Home Screen</Text> */}
-            <View
-                style={{
-                    marginHorizontal: 15,
-                    marginTop: 15,
-                }}>
-                <Text style={{ textAlignVertical: 'center' }}>
-                    Please choose Blood Group:
-          </Text>
-                <View
-                    style={{
-                        marginTop: 15,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                    }}>
-                    <Picker
-                        selectedValue={searchVal}
-                        style={{ height: 20, width: 150 }}
-                        onValueChange={(itemValue, itemIndex) => {
-                            itemValue === '' ? null : setSearchVal(itemValue);
-                            itemValue === '' ? null : console.log(itemValue);
-                        }}>
-                        <Picker.Item label="Select Blood Group" value="" />
-                        <Picker.Item label="A+" value="A+" />
-                        <Picker.Item label="A-" value="A-" />
-                        <Picker.Item label="B+" value="B+" />
-                        <Picker.Item label="B-" value="B-" />
-                        <Picker.Item label="AB+" value="AB+" />
-                        <Picker.Item label="AB-" value="AB-" />
-                        <Picker.Item label="O+" value="O+" />
-                        <Picker.Item label="O-" value="O-" />
-                    </Picker>
-                    <TouchableOpacity
-                        onPress={() => props.GetDonor({ Group: searchVal })}
-                        style={{
-                            backgroundColor: 'green',
-                            padding: 8,
-                            borderRadius: 4,
-                            // marginTop: 20,
-                        }}>
-                        <Text style={{ color: 'white' }}>Get Donor</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            {/* <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-  
-        <TextInput
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-        onChangeText={text => setSearchVal(text)}
-        placeholder="Search Blood Group"
-        value={searchVal}
-      />*/}
-
-            {/* </View>  */}
-            <ScrollView style={{ marginTop: 25, marginBottom: 55 }}>
-                {props.getDonors?.map((v, i) => {
-                    return (
-                        props.uid === v.uid ? null :
-                            v.donor ? (
+            <View style={{ flex: 1 }}>
+                <ScrollView style={{ marginTop: 25, marginBottom: 55 }}>
+                    <Text style={{ marginBottom: 25, fontWeight: 'bold', fontSize: 25, textAlign: 'center' }}>{props.user.role === 'company' ? `${props.user.name} Posts` : 'All Companies Post\'s'}</Text>
+                    {props.user.role === 'company' &&
+                        Object.keys(props.posts)?.map((v, i) => {
+                            return (
                                 <View style={{ alignItems: 'center' }} key={i}>
                                     <Card style={{ width: WIDTH - 20 }}>
-                                        <TouchableOpacity onPress={() => { navigation.navigate('Details', { params: { select: v } }) }}>
+                                        <TouchableOpacity onPress={() => { navigation.navigate('Post Details', { params: { select: props.posts[v] } }) }}>
                                             <CardItem>
-                                                {/* <Icon type="MaterialIcons" name="chevron-right" style={{ fontSize: 20, fontWeight: 'bold' }} /> */}
-                                                <Image
-                                                    source={{ uri: v.photo }}
-                                                    style={{
-                                                        height: 60,
-                                                        width: 60,
-                                                        marginRight: 10,
-                                                        resizeMode: 'contain',
-                                                        alignSelf: 'center',
-                                                    }}
-                                                />
                                                 <View>
-                                                    <Text>{v.name}</Text>
-                                                    <Text>{v.address}</Text>
+                                                    <Text><Text style={{ fontWeight: "bold" }}>Company: </Text>{props.user.name}</Text>
+                                                    <Text><Text style={{ fontWeight: "bold" }}>Total Position: </Text>{props.posts[v].totalPosition}</Text>
+                                                    <Text><Text style={{ fontWeight: "bold" }}>Qualification: </Text>{props.posts[v].qualification}</Text>
                                                 </View>
                                                 <Right>
                                                     <View style={{ alignItems: 'flex-start' }}>
-                                                        <Text>{v.bloodGroup}</Text>
-                                                        <Text>{v.gender ? 'Male' : 'Female'}</Text>
+                                                        <Text><Text style={{ fontWeight: "bold" }}>Job Title: </Text>{props.posts[v].jobTitle}</Text>
+                                                        <Text><Text style={{ fontWeight: "bold" }}>Experience: </Text>{props.posts[v].experience}</Text>
+                                                        <Text><Text style={{ fontWeight: "bold" }}>Salary: </Text>{props.posts[v].salary}</Text>
                                                     </View>
                                                 </Right>
-                                                {/* <Right style={{ position: 'absolute', right: 15, flexDirection: 'row', flexWrap: 'wrap', }}>
-                                              <Icon type="MaterialIcons" name="edit" style={{ fontSize: 35, color: 'green', marginRight: 10 }} onPress={() => editTodo(v, i)} />
-                                              <Icon type="MaterialIcons" name="delete-forever" style={{ fontSize: 35, color: 'red', }} onPress={() => delTodo(i)} />
-                                            </Right> */}
                                             </CardItem>
                                         </TouchableOpacity>
                                     </Card>
                                 </View>
-                            ) : null
-                    );
-                })}
-            </ScrollView>
+                            )
+                        })}
+                    {props.user.role === 'student' && Object.keys(props.allposts)?.map((v, i) => {
+                        let op = props.allposts[v];
+                        return Object.keys(props.allposts[v]).map((v, i) => {
+                            return (
+                                <View style={{ alignItems: 'center' }} key={i}>
+                                    <Card style={{ width: WIDTH - 20 }}>
+                                        <TouchableOpacity onPress={() => { navigation.navigate('Details', { params: { select: op[v] } }) }}>
+                                            <CardItem>
+                                                <View>
+                                                    <Text><Text style={{ fontWeight: "bold" }}>Company: </Text>{op[v].name}</Text>
+                                                    <Text><Text style={{ fontWeight: "bold" }}>Job Title: </Text>{op[v].jobTitle}</Text>
+                                                    <Text><Text style={{ fontWeight: "bold" }}>Qualification: </Text>{op[v].qualification}</Text>
+                                                </View>
+                                                <Right>
+                                                    <View style={{ alignItems: 'flex-start' }}>
+                                                        <Text><Text style={{ fontWeight: "bold" }}>Total Position: </Text>{op[v].totalPosition}</Text>
+                                                        <Text><Text style={{ fontWeight: "bold" }}>Experience: </Text>{op[v].experience}</Text>
+                                                        <Text><Text style={{ fontWeight: "bold" }}>Salary: </Text>{op[v].salary}</Text>
+                                                    </View>
+                                                </Right>
+                                            </CardItem>
+                                        </TouchableOpacity>
+                                    </Card>
+                                </View>
+                            )
+                        })
+                    })}
+                </ScrollView>
+                {props.user.role === 'company' && <Fab
+                    active={false}
+                    style={{ backgroundColor: '#5067FF' }}
+                    onPress={() => navigation.navigate('JobPost', { uid: props.user.uid, name: props.user.name })}>
+                    <Icon name="add" />
+                </Fab>}
+            </View>
         </View>
     );
 }
@@ -147,14 +121,18 @@ const styles = StyleSheet.create({
 
 function mapStateToProp(state) {
     return {
-        getDonors: state.root.getDonors,
-        uid: state.root.uid,
+        posts: { ...state.root.posts },
+        allposts: { ...state.root.allposts },
+        user: { ...state.root.user },
     };
 }
 function mapDispatchToProp(dispatch) {
     return {
-        GetDonor: (data) => {
-            dispatch(GetDonor(data));
+        GetPosts: (data) => {
+            dispatch(GetPosts(data));
+        },
+        GetAllPosts: () => {
+            dispatch(GetAllPosts());
         },
     };
 }
